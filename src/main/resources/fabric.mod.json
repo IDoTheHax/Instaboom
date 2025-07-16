@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "instaboom",
+  "version": "${version}",
+  "name": "Instaboom",
+  "description": "Everything explodes: blocks, mobs, items, actions. Survive as the world grows more unstable!",
+  "authors": ["IDoTheHax"],
+  "contact": {"https://discord.gg/faPd8MQ3Ke"},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/instaboom/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "net.idothehax.instaboom.client.InstaboomDataGenerator"
+    ],
+    "client": [
+      "net.idothehax.instaboom.client.InstaboomClient"
+    ],
+    "main": [
+      "net.idothehax.instaboom.Instaboom"
+    ]
+  },
+  "mixins": [
+    "instaboom.mixins.json",
+    {
+      "config": "instaboom.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
