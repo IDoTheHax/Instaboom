@@ -1,0 +1,7 @@
+{
+  "block_break_explosion": true,
+  "mob_hit_explosion": true,
+  "item_pickup_explosion": true,
+  "explosive_drop_chance": 0.2,
+  "explosion_strength": 4.0
+}
