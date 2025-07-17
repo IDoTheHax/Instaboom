@@ -1,14 +1,23 @@
 package net.idothehax.instaboom;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.idothehax.instaboom.event.BlockBreakListener;
 import net.idothehax.instaboom.event.MobHitListener;
 import net.idothehax.instaboom.registry.BlockExplosionRegistry;
+import net.idothehax.instaboom.utils.LandmineManager;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.ShapedRecipe;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 
 public class Instaboom implements ModInitializer {
     public static InstaboomConfig config;
@@ -44,6 +53,15 @@ public class Instaboom implements ModInitializer {
             } else if (gracePeriodOver && tickCount % STAGE_INTERVAL_TICKS == 0) {
                 currentStage++;
                 broadcastTitle("Escalation Mode: Stage " + currentStage + " activated! Brace yourself.");
+            }
+        });
+
+
+        ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+            for (ServerWorld world : server.getWorlds()) {
+                // Initialize the landmine manager for each world
+                LandmineManager.setServerWorld(world);
+                LandmineManager.getManager(world);
             }
         });
     }
@@ -82,4 +100,6 @@ public class Instaboom implements ModInitializer {
             }
         }
     }
+
+
 }
