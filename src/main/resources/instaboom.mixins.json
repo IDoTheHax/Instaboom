@@ -4,6 +4,8 @@
   "package": "net.idothehax.instaboom.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ItemEntityPickupMixin",
+    "PlayerEntityDropMixin"
   ],
   "injectors": {
     "defaultRequire": 1

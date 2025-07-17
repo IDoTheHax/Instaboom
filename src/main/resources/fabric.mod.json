@@ -5,7 +5,7 @@
   "name": "Instaboom",
   "description": "Everything explodes: blocks, mobs, items, actions. Survive as the world grows more unstable!",
   "authors": ["IDoTheHax"],
-  "contact": {"https://discord.gg/faPd8MQ3Ke"},
+  "contact": {"Discord": "https://discord.gg/faPd8MQ3Ke", "Bug Reports": "https://github.com/IDoTheHax/Instaboom/issues"},
   "license": "All-Rights-Reserved",
   "icon": "assets/instaboom/icon.png",
   "environment": "*",
