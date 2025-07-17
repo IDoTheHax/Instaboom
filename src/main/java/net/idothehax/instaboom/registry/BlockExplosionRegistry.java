@@ -2,55 +2,60 @@ package net.idothehax.instaboom.registry;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-import net.minecraft.registry.tag.BlockTags;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public class BlockExplosionRegistry {
-    private static final Map<Block, Float> EXPLOSION_STRENGTHS = new HashMap<>();
+    private static final Map<Block, BlockExplosionData> EXPLOSION_DATA = new HashMap<>();
 
-    // Default strengths for different block categories
-    private static final float WOOD_STRENGTH = 1.5f;
-    private static final float STONE_STRENGTH = 2.5f;
-    private static final float ORE_STRENGTH = 3.0f;
-    private static final float OBSIDIAN_STRENGTH = 5.0f;
-    private static final float DEFAULT_STRENGTH = 1.0f;
+    public static class BlockExplosionData {
+        public final float strength;
+        public final float chainChance;
+
+        public BlockExplosionData(float strength, float chainChance) {
+            this.strength = strength;
+            this.chainChance = chainChance;
+        }
+    }
 
     public static void initialize() {
-        // Wood-based blocks (smaller explosions)
-        registerBlock(Blocks.OAK_LOG, WOOD_STRENGTH);
-        registerBlock(Blocks.BIRCH_LOG, WOOD_STRENGTH);
-        registerBlock(Blocks.SPRUCE_LOG, WOOD_STRENGTH);
-        registerBlock(Blocks.JUNGLE_LOG, WOOD_STRENGTH);
-        registerBlock(Blocks.ACACIA_LOG, WOOD_STRENGTH);
-        registerBlock(Blocks.DARK_OAK_LOG, WOOD_STRENGTH);
+        // Wood tier - low strength, very low chain chance
+        registerBlock(Blocks.OAK_LOG, 1.5f, 0.05f);
+        registerBlock(Blocks.BIRCH_LOG, 1.5f, 0.05f);
+        registerBlock(Blocks.SPRUCE_LOG, 1.5f, 0.05f);
+        registerBlock(Blocks.JUNGLE_LOG, 1.5f, 0.05f);
+        registerBlock(Blocks.ACACIA_LOG, 1.5f, 0.05f);
+        registerBlock(Blocks.DARK_OAK_LOG, 1.5f, 0.05f);
 
-        // Stone-based blocks (medium explosions)
-        registerBlock(Blocks.STONE, STONE_STRENGTH);
-        registerBlock(Blocks.COBBLESTONE, STONE_STRENGTH);
-        registerBlock(Blocks.GRANITE, STONE_STRENGTH);
-        registerBlock(Blocks.DIORITE, STONE_STRENGTH);
-        registerBlock(Blocks.ANDESITE, STONE_STRENGTH);
+        // Stone tier - medium strength, low chain chance
+        registerBlock(Blocks.STONE, 2.5f, 0.1f);
+        registerBlock(Blocks.COBBLESTONE, 2.5f, 0.1f);
+        registerBlock(Blocks.GRANITE, 2.5f, 0.1f);
+        registerBlock(Blocks.DIORITE, 2.5f, 0.1f);
+        registerBlock(Blocks.ANDESITE, 2.5f, 0.1f);
 
-        // Ores (larger explosions)
-        registerBlock(Blocks.IRON_ORE, ORE_STRENGTH);
-        registerBlock(Blocks.GOLD_ORE, ORE_STRENGTH);
-        registerBlock(Blocks.DIAMOND_ORE, ORE_STRENGTH);
-        registerBlock(Blocks.EMERALD_ORE, ORE_STRENGTH);
-        registerBlock(Blocks.REDSTONE_ORE, ORE_STRENGTH);
-        registerBlock(Blocks.LAPIS_ORE, ORE_STRENGTH);
+        // Ore tier - high strength, medium chain chance
+        registerBlock(Blocks.IRON_ORE, 3.0f, 0.15f);
+        registerBlock(Blocks.GOLD_ORE, 3.0f, 0.2f);
+        registerBlock(Blocks.DIAMOND_ORE, 3.5f, 0.25f);
+        registerBlock(Blocks.EMERALD_ORE, 3.5f, 0.25f);
+        registerBlock(Blocks.REDSTONE_ORE, 3.0f, 0.15f);
+        registerBlock(Blocks.LAPIS_ORE, 3.0f, 0.15f);
 
-        // Special blocks (very large explosions)
-        registerBlock(Blocks.OBSIDIAN, OBSIDIAN_STRENGTH);
-        registerBlock(Blocks.ANCIENT_DEBRIS, OBSIDIAN_STRENGTH);
+        // Special tier - very high strength, high chain chance
+        registerBlock(Blocks.OBSIDIAN, 5.0f, 0.3f);
+        registerBlock(Blocks.ANCIENT_DEBRIS, 5.0f, 0.35f);
+        registerBlock(Blocks.NETHERITE_BLOCK, 6.0f, 0.4f);
+
+        // Default values for unregistered blocks
+        registerBlock(Blocks.AIR, 1.0f, 0.0f);
     }
 
-    public static void registerBlock(Block block, float strength) {
-        EXPLOSION_STRENGTHS.put(block, strength);
+    public static void registerBlock(Block block, float strength, float chainChance) {
+        EXPLOSION_DATA.put(block, new BlockExplosionData(strength, chainChance));
     }
 
-    public static float getExplosionStrength(Block block) {
-        return EXPLOSION_STRENGTHS.getOrDefault(block, DEFAULT_STRENGTH);
+    public static BlockExplosionData getExplosionData(Block block) {
+        return EXPLOSION_DATA.getOrDefault(block, new BlockExplosionData(1.0f, 0.0f));
     }
 }

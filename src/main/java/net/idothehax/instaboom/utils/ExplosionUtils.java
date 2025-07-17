@@ -1,31 +1,67 @@
 package net.idothehax.instaboom.utils;
 
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-
-import net.idothehax.instaboom.prog.PlayerProg;
+import net.idothehax.instaboom.Instaboom;
 import net.idothehax.instaboom.registry.BlockExplosionRegistry;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.world.GameRules;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
+import java.util.Random;
 
 public class ExplosionUtils {
+    private static final Random RANDOM = new Random();
+    private static final int MAX_CHAIN_LENGTH = 3;
+
     public static void kaboom(ServerWorld world, BlockPos pos, PlayerEntity player) {
+        kaboomWithChain(world, pos, player, 0);
+    }
+
+    private static void kaboomWithChain(ServerWorld world, BlockPos pos, PlayerEntity player, int chainDepth) {
         BlockState blockState = world.getBlockState(pos);
-        float baseStrength = BlockExplosionRegistry.getExplosionStrength(blockState.getBlock());
+        BlockExplosionRegistry.BlockExplosionData explosionData =
+                BlockExplosionRegistry.getExplosionData(blockState.getBlock());
 
-        // Record the explosion for player progression
-        PlayerProg.onExplosionTriggered(player);
+        // Create explosion using the correct method signature
+        world.createExplosion(
+                null, // Entity causing explosion
+                pos.getX() + 0.5, // X coordinate
+                pos.getY() + 0.5, // Y coordinate
+                pos.getZ() + 0.5, // Z coordinate
+                explosionData.strength,
+                World.ExplosionSourceType.BLOCK // Use appropriate explosion source type
+        );
 
-        // Get player's current damage reduction
-        float damageReduction = PlayerProg.getStats(player).getDamageReduction();
+        // Chain reaction based on block value
+        if (chainDepth < MAX_CHAIN_LENGTH && RANDOM.nextFloat() < explosionData.chainChance) {
+            // Calculate new position for chain explosion
+            BlockPos chainPos = pos.add(
+                    RANDOM.nextInt(7) - 3,
+                    RANDOM.nextInt(5) - 2,
+                    RANDOM.nextInt(7) - 3
+            );
 
-        // Apply damage reduction to explosion strength
-        float finalStrength = baseStrength * (1.0f - damageReduction);
+            // Schedule next chain explosion using Fabric's ServerTickEvents
+            int delay = RANDOM.nextInt(5) + 1; // 1-5 tick delay
+            scheduleChainExplosion(world, chainPos, player, chainDepth + 1, delay);
+        }
+    }
 
-        boolean mobGriefing = world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
-        world.createExplosion(null, pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, finalStrength, mobGriefing ? ServerWorld.ExplosionSourceType.BLOCK : ServerWorld.ExplosionSourceType.NONE);
+
+    private static void scheduleChainExplosion(ServerWorld world, BlockPos pos, PlayerEntity player, int depth, int delay) {
+        int[] ticksLeft = {delay};
+        boolean[] completed = {false};
+
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if (completed[0]) return; // Skip if already completed
+
+            if (ticksLeft[0] <= 0) {
+                kaboomWithChain(world, pos, player, depth);
+                completed[0] = true; // Mark as completed
+                return;
+            }
+            ticksLeft[0]--;
+        });
     }
 }
