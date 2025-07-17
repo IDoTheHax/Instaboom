@@ -80,13 +80,16 @@ public class Instaboom implements ModInitializer {
             // Stage 1: only block breaks are explosive
             case 1 -> eventType.equals("blockBreak");
 
-            // Stage 2: block breaks, mob hits, item pickups and drops are explosive
+            // Stage 2: block breaks and mob hits
             case 2 -> eventType.equals("blockBreak") ||
-                    eventType.equals("mobHit") ||
-                    eventType.equals("itemPickup") ||
-                    eventType.equals("explosiveDrop");
+                    eventType.equals("mobHit");
 
-            // Stage 3 and beyond: everything can explode
+            // Stage 3: add crafting explosions
+            case 3 -> eventType.equals("blockBreak") ||
+                    eventType.equals("mobHit") ||
+                    eventType.equals("crafting");
+
+            // Stage 4+: everything explodes
             default -> true;
         };
     }

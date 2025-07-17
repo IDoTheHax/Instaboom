@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "ChunkLoadMixin",
+    "CraftingExplosionMixin",
     "ItemEntityPickupMixin",
     "LandmineMixin",
     "PlayerEntityDropMixin"
