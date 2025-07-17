@@ -1,7 +1,7 @@
 package net.idothehax.instaboom.mixin;
 
 import net.idothehax.instaboom.Instaboom;
-import net.idothehax.instaboom.event.ExplosionUtils;
+import net.idothehax.instaboom.utils.ExplosionUtils;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -24,7 +24,7 @@ public class ItemEntityPickupMixin {
 
             if (shouldExplode) {
                 BlockPos pos = player.getBlockPos();
-                ExplosionUtils.kaboom((ServerWorld) player.getWorld(), pos, Instaboom.config.explosionStrength);
+                ExplosionUtils.kaboom((ServerWorld) player.getWorld(), pos, player);
             }
         }
     }

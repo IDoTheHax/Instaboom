@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.idothehax.instaboom.event.BlockBreakListener;
 import net.idothehax.instaboom.event.MobHitListener;
+import net.idothehax.instaboom.registry.BlockExplosionRegistry;
 import net.minecraft.network.packet.s2c.play.TitleS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,6 +25,7 @@ public class Instaboom implements ModInitializer {
         config = InstaboomConfig.loadConfig();
         BlockBreakListener.register();
         MobHitListener.register();
+        BlockExplosionRegistry.initialize();
         System.out.println("Instaboom mod initialized. 60 seconds grace period is active.");
 
         ServerTickEvents.END_SERVER_TICK.register(server -> {
